@@ -1,2 +1,2 @@
 # Fingers
-link
+link of the finger that can do everything!
