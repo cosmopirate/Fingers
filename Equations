@@ -1,1 +1,62 @@
-l1 = x cost1+ + ysint1
+syms l_1 l_2 l_3
+syms t t_1(t) t_2(t) t_3(t)
+
+x_1 = l_1*cos(t_1(t));
+y_1 = l_1*sin(t_1(t));
+
+x_2 = l_1*cos(t_1(t))+l_2*cos(t_1(t)+t_2(t));
+y_2 = l_1*sin(t_1(t))+l_2*sin(t_1(t)+t_2(t));
+
+x_3 = l_1*cos(t_1(t))+l_2*cos(t_1(t)+t_2(t))+l_3*cos(t_1(t)+t_2(t)+t_3(t));
+y_3 = l_1*sin(t_1(t))+l_2*sin(t_1(t)+t_2(t))+l_3*sin(t_1(t)+t_2(t)+t_3(t));
+
+syms m_1 m_2 m_3 g
+
+K1 = 0.5*m_1*{(diff(x_1))^2+(diff(y_1))^2};
+K2 = 0.5*m_2*{(diff(x_2))^2+(diff(y_2))^2};
+K3 = 0.5*m_3*{(diff(x_3))^2+(diff(y_3))^2};
+
+P1 = m_1*g*y_1;
+P2 = m_2*g*y_2;
+P3 = m_3*g*y_3;
+
+L = (K1+K2+K3)-(P1+P2+P3);
+
+syms t1 t2 t3
+syms dt1 dt2 dt3
+
+s1 = [t_1(t),t_2(t),t_3(t)];
+s2 = [diff(t_1(t),t), diff(t_2(t),t), diff(t_3(t),t)];
+s3 = [t1, t2, t3];
+s4 = [dt1, dt2, dt3];
+
+
+Lag = subs(L,[s1,s2],[s3,s4]);
+dLdst1 = diff(Lag,s3(1,1));
+dLdst2 = diff(Lag,s3(1,2));
+dLdst3 = diff(Lag,s3(1,3));
+
+dLdsdt1 = diff(Lag,s4(1,1));
+dLdsdt2 = diff(Lag,s4(1,2));
+dLdsdt3 = diff(Lag,s4(1,3));
+
+
+syms tt1(t) tt2(t) tt3(t)
+syms ddt1(t) ddt2(t) ddt3(t)
+
+ss1 = [t1, t2, t3];
+ss2 = [dt1, dt2, dt3];
+ss3 = [tt1(t), tt2(t), tt3(t)];
+ss4 = [ddt1(t), ddt2(t), ddt3(t)];
+
+Lag121 = subs(dLdst1,[s3,s4],[ss3,ss4]);
+Lag122 = subs(dLdst2,[s3,s4],[ss3,ss4]);
+Lag123 = subs(dLdst3,[s3,s4],[ss3,ss4]);
+
+Lag131 = subs(dLdsdt1,[ss1,ss2],[ss3,ss4]);
+Lag132 = subs(dLdsdt2,[ss1,ss2],[ss3,ss4]);
+Lag133 = subs(dLdsdt3,[ss1,ss2],[ss3,ss4]);
+
+Tau1 = diff(Lag131,t)-Lag121
+Tau2 = diff(Lag132,t)-Lag122
+Tau3 = diff(Lag133,t)-Lag123
